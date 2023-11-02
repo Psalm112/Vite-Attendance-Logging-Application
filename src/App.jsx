@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
+import Attendance from "./Components/Attendance";
 import "./App.css";
-import Attendance from "./components/attendance.jsx";
 
 function App() {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors },
   } = useForm();
