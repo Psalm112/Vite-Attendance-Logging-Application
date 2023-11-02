@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import "./App.css";
-import Attendance from "./components/attendance";
+import Attendance from "./components/attendance.jsx";
 
 function App() {
   const {
