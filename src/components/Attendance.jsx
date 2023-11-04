@@ -2,18 +2,27 @@ import { useEffect, useState } from "react";
 
 function Attendance({
   attendanceList,
-  setAttendanceList,
   isNotSearchResult,
   isNotFilterResult,
   isStorageLoaded,
-  updatedAttendanceList,
 }) {
   // Erasing and Restoring attendance
+  const [updatedAttendanceList, setUpdatedAttendanceList] = useState([]);
+  useEffect(() => {
+    setUpdatedAttendanceList(attendanceList);
+  }, [attendanceList]);
+  useEffect(() => {
+    if (isStorageLoaded) {
+      localStorage.setItem(
+        "attendances",
+        JSON.stringify(updatedAttendanceList)
+      );
+    }
+  }, [updatedAttendanceList]);
   const handleEraseToggle = (index) => {
-    const updatedList = [...attendanceList];
+    const updatedList = [...updatedAttendanceList];
     updatedList[index].erase = !updatedList[index].erase;
-    setAttendanceList(updatedList);
-    localStorage.setItem("attendances", JSON.stringify(attendanceList));
+    setUpdatedAttendanceList(updatedList);
   };
   return (
     <>

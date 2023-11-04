@@ -10,8 +10,8 @@ function App() {
     reset,
     formState: { errors },
   } = useForm();
-  // const attendanceRef = useRef(null);
-  // const [attendances, setAttendances] = useState([]);
+  const attendanceRef = useRef(null);
+  const [attendances, setAttendances] = useState([]);
   const months = [
     "January",
     "February",
@@ -27,25 +27,16 @@ function App() {
     "December",
   ];
   const [attendanceList, setAttendanceList] = useState([]);
-  const [isShow, setIsShow] = useState(true);
+  const [isStorageLoaded, setIsStorageLoaded] = useState(false);
   // When the web page window is loaded previously saved attendances if available are fetched from the localstorage to be displayed
-  const storedAttendances = localStorage.getItem("attendances");
-  // console.log(storedAttendances);
-  const parsedAttendances = JSON.parse(storedAttendances);
-  // console.log(parsedAttendances);
-  // Whrn i set the attendance list outside a useEffect hook it gave me this errorr:
-  // Uncaught Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
-  // this happened because i set state without proper conditions, leading to a continuous re-rendering of the App.jsx component.
-  // so i had to return it to the useEffect hook below
-  // if (storedAttendances) {
-  // setAttendanceList(parsedAttendances);
-  // }
-
   useEffect(() => {
-    setAttendanceList(parsedAttendances);
-    //the setimeout is used to remove the loading animation after 1.5sec
+    const storedAttendances = localStorage.getItem("attendances");
+    if (storedAttendances) {
+      const parsedAttendances = JSON.parse(storedAttendances);
+      setAttendanceList(parsedAttendances);
+    }
     setTimeout(() => {
-      setIsShow(false);
+      setIsStorageLoaded(true);
     }, 1500);
     return () => {
       setAttendanceList([]);
@@ -65,20 +56,25 @@ function App() {
     hour = hour ? hour : 12;
     minutes = minutes < 10 ? "0" + minutes : minutes;
     let currentDateTIme = `${hour}:${minutes} ${am_pm}  ${month} ${date}, ${year}`;
-    const newAttendanceEntry = {
-      name: data.name.trim(),
-      class: data.courseTitle.trim(),
-      erase: false,
-      entryTime: currentDateTIme,
-    };
-    const updatedAttendanceList = [...attendanceList, newAttendanceEntry];
-    setAttendanceList(updatedAttendanceList);
-    localStorage.setItem("attendances", JSON.stringify(updatedAttendanceList));
+    setAttendanceList([
+      ...attendanceList,
+      {
+        name: data.name.trim(),
+        class: data.courseTitle.trim(),
+        erase: false,
+        entryTime: currentDateTIme,
+      },
+    ]);
     reset({
       name: "",
       courseTitle: "",
     });
   };
+  useEffect(() => {
+    if (isStorageLoaded) {
+      localStorage.setItem("attendances", JSON.stringify(attendanceList));
+    }
+  }, [attendanceList]);
 
   // Search functionality
   const [isNotSearchResult, setIsNotSearchResult] = useState([]);
@@ -225,7 +221,7 @@ function App() {
             </div>
           </div>
 
-          {isShow && (
+          {!isStorageLoaded && (
             <div id="loader">
               <div className="attendance-loader">
                 <div></div>
@@ -236,14 +232,12 @@ function App() {
             </div>
           )}
 
-          <div className="attendance-list-container">
+          <div ref={attendanceRef} className="attendance-list-container">
             <Attendance
               attendanceList={attendanceList}
-              setAttendanceList={setAttendanceList}
               isNotSearchResult={isNotSearchResult}
               isNotFilterResult={isNotFilterResult}
-              // isStorageLoaded={isStorageLoaded}
-              // updatedAttendanceList={updatedAttendanceList}
+              isStorageLoaded={isStorageLoaded}
             />
           </div>
         </div>
