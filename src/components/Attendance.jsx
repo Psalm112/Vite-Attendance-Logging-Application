@@ -5,8 +5,6 @@ function Attendance({
   setAttendanceList,
   isNotSearchResult,
   isNotFilterResult,
-  isStorageLoaded,
-  updatedAttendanceList,
 }) {
   // Erasing and Restoring attendance
   const handleEraseToggle = (index) => {

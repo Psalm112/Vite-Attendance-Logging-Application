@@ -29,7 +29,7 @@ function App() {
   const [attendanceList, setAttendanceList] = useState([]);
   const [isShow, setIsShow] = useState(true);
   // When the web page window is loaded previously saved attendances if available are fetched from the localstorage to be displayed
-  const storedAttendances = localStorage.getItem("attendances");
+  const storedAttendances = localStorage.getItem("attendances") ?? "[]";
   // console.log(storedAttendances);
   const parsedAttendances = JSON.parse(storedAttendances);
   // console.log(parsedAttendances);
@@ -54,6 +54,7 @@ function App() {
 
   // The submit attendance button to add the filled name and class to the attendance with the time it was added
   const onSubmit = (data) => {
+    console.log(data);
     const now = new Date();
     let year = now.getFullYear();
     let month = months[now.getMonth()];
